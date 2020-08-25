@@ -2,7 +2,12 @@ const puppeteer = require('puppeteer');
 
 async function FindNutricionist( __subs ){
     try{
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+            ],
+        });
         const page = await browser.newPage();
         await page.goto('http://cnn.cfn.org.br/application/index/consulta-nacional');
         //Espera o carregamento do componente
