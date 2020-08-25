@@ -1,13 +1,14 @@
 const FindNutricionist = require('../Crawler/Nutricionist');
 const Nutricionist = require('../model/NutricionistsSchema');
 
+
 module.exports = {
     //Procurar um nutricionista pela numero de incrição no CFN
     async index(req,res){
         try{
-            const { subs } = req.params;
-    
-            const nutricionistExists = await Nutricionist.findOne({subscription: subs});
+            let { subs } = req.params;
+            
+            let nutricionistExists = await Nutricionist.findOne({subscription: subs});
             
             if(nutricionistExists){
                 console.log(`Founded: ${subs}`);
@@ -25,8 +26,25 @@ module.exports = {
             }
             
             const nutri = await FindNutricionist(subs);
-            nutri.subscription = parseInt(nutri.subscription);
+            subs = nutri.subscription = parseInt(nutri.subscription);
             
+            nutricionistExists = await Nutricionist.findOne({subscription: subs});
+            
+            if(nutricionistExists){
+                console.log(`Founded: ${subs}`);
+                return res.json({
+                    _id: nutricionistExists._id,
+                    nutricionist: {
+                        name: nutricionistExists.name,
+                        subscription: nutricionistExists.subscription,
+                        crn: nutricionistExists.crn,
+                        situation: nutricionistExists.situation,
+                        subscriptionType: nutricionistExists.subscriptionType,
+                        lastUpdate: nutricionistExists.lastUpdate,
+                    },
+                });
+            }
+
             const newNutricionist = await Nutricionist.create(nutri);
 
             console.log(`Created: ${subs}`);
